@@ -7,10 +7,25 @@ const app = express();
 // Define the port where the server will listen for requests
 const PORT = 3000;
 
-// Define a simple root route (HTTP GET method)
-// When a client visits the home page ("/") of our server, we send back a greeting
+app.use(express.json());
+
+
+// STAGE 1: Root endpoint returning API metadata in JSON format
+// Instead of plain text, we now return a structured JSON object describing our API
 app.get('/', (req, res) => {
-  res.send('Hello, server!');
+  res.json({
+    name: "Task API",
+    version: "1.0",
+    endpoints: ["/tasks"]
+  });
+});
+
+// STAGE 1: Health check endpoint
+// Real applications use this endpoint to check if the server is healthy and responding
+app.get('/health', (req, res) => {
+  res.json({
+    status: "ok"
+  });
 });
 
 // Start the server and listen on the specified port
