@@ -59,6 +59,26 @@ app.get('/tasks/:id', (req, res) => {
   res.json(task);
 });
 
+// STAGE 3
+  app.post('/tasks', (req,res) => {
+    const { title } = req.body;
+    if( !title || title.trim() === ""){
+      return res.status(400).json({error: "Title is required"});
+    }
+
+    const newTaskId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+
+    const newTask = {
+      id: newTaskId,
+      title: title,
+      done: false
+    };
+
+    tasks.push(newTask);
+
+    res.status(201).json(newTask);
+  });
+
 // Start the server and listen on the specified port
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
