@@ -42,7 +42,20 @@ app.get('/health', (req, res) => {
 
 // STAGE 2: GET /tasks - Retrieve the list of all tasks
 app.get('/tasks', (req, res) => {
-  res.json(tasks);
+  const { done } = req.query;
+
+  // Se o parâmetro 'done' não foi enviado, devolvemos a lista completa original
+  if (done === undefined) {
+    return res.json(tasks);
+  }
+
+  // Como o query parameter vem sempre como String, convertemos para Booleano
+  const isDoneFilter = done === 'true';
+
+  // Filtramos a nossa lista na memória
+  const filteredTasks = tasks.filter(task => task.done === isDoneFilter);
+
+  res.json(filteredTasks);
 });
 
 // STAGE 2: GET /tasks/:id - Retrieve a single task by its dynamic ID parameter

@@ -34,7 +34,18 @@
     },
     "/tasks": {
       "get": {
-        "summary": "List all tasks",
+        "summary": "List all tasks by done or not done",
+        "parameters": [
+          {
+            "name": "done",
+            "in": "query",
+            "required": false,
+            "description": "Filter tasks by completion status",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "A list of tasks"
