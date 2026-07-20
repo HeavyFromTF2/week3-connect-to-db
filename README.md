@@ -39,7 +39,7 @@ You can test the search functionality directly in your terminal:
 * **Output:** `[{"id":1,"title":"Learn Express basics","done":true}]`
 
 ## Database Screenshot
-<img width="959" height="763" alt="image" src="https://github.com/user-attachments/assets/0474db6d-be19-4984-851e-9a963ff55904" />
+<img width="600" height="450" alt="image" src="https://github.com/user-attachments/assets/0474db6d-be19-4984-851e-9a963ff55904" />
 
 ## Example SQL Query
 * **Query executed:** `SELECT * FROM tasks WHERE done = 1;`
