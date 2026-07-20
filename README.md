@@ -39,12 +39,23 @@ You can test the search functionality directly in your terminal:
 * **Output:** `[{"id":1,"title":"Learn Express basics","done":true}]`
 
 ## Database Screenshot
-![DB Browser Screenshot](./db-screenshot.png)
+<img width="959" height="763" alt="image" src="https://github.com/user-attachments/assets/0474db6d-be19-4984-851e-9a963ff55904" />
 
 ## Example SQL Query
 * **Query executed:** `SELECT * FROM tasks WHERE done = 1;`
 * **Output/Result:** Returned only the tasks marked as completed (`done = 1`), specifically "Learn Express basics" and "Edit simple task".
 
+---
+
+## AI Usage
+
+Continuing from last week, I used AI as an active coach and code-review tool rather than a shortcut:
+* **Database & SQL Guidance:** Used AI to understand `better-sqlite3` concepts, parameterized queries (`?`), and how SQLite integers (`0`/`1`) map to JavaScript booleans.
+* **Stage 6 Benchmarking & Code Review:** Used AI to generate an isolated version of the API, allowing me to run `git diff`, analyze structural choices, and evaluate performance trade-offs (e.g., in-memory response construction vs. additional database queries).
+* **Documentation:** Used it to help me polish this `README.md`.
+
+---
+---
 
 ## AI vs me (Stage 6 - Rematch)
 
@@ -80,3 +91,5 @@ You can test the search functionality directly in your terminal:
 ### The Rematch:
 * **Improved Prompt:** "Build a CRUD task API in Node.js using Express and better-sqlite3 using tasks.db. Create the 'tasks' table if missing and seed 3 default tasks ONLY if empty. Implement GET /health, GET /tasks (supporting ?search= with SQL LIKE and ?done= filters), GET /tasks/:id, POST /tasks, PUT /tasks/:id, DELETE /tasks/:id, and Swagger UI documentation at /docs using openapi.json. Use parameterized queries everywhere, 400/404 error handling, and map 0/1 integers to JS booleans."
 * **Rematch Result:** By explicitly requesting table seeding, query parameters, and Swagger UI setup at /docs in the updated prompt, the regenerated AI code included all missing features, matching my hand-crafted submission.
+
+
