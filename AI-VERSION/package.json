@@ -1,14 +1,13 @@
 {
-  "name": "todo-api",
+  "name": "task-api",
   "version": "1.0.0",
-  "description": "Simple single-file Todo List CRUD API with Swagger UI",
-  "main": "server.js",
+  "description": "Simple CRUD Task API using Express and better-sqlite3",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "better-sqlite3": "^11.3.0"
   }
 }
