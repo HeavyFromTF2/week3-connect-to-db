@@ -86,21 +86,26 @@ app.get('/tasks/:id', (req, res) => {
   });
 });
 
-// STAGE 3: Create (with dynamic ID generation and title validation)
-app.post('/tasks', (req,res) => {
+// STAGE 2: Create new tasks in SQLite
+app.post('/tasks', (req, res) => {
   const { title } = req.body;
-  if( !title || title.trim() === ""){
-    return res.status(400).json({error: "Title is required"});
+
+  // Validação: título obrigatório e não vazio
+  if (!title || title.trim() === '') {
+    return res.status(400).json({ error: 'Title is required' });
   }
 
-  const newTaskId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+  // Prepara e executa o INSERT parametrizado
+  const insert = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)');
+  const result = insert.run(title.trim(), 0);
+
+  // Devolve a tarefa criada com o ID gerado pelo SQLite (status 201)
   const newTask = {
-    id: newTaskId,
-    title: title,
+    id: Number(result.lastInsertRowid),
+    title: title.trim(),
     done: false
   };
 
-  tasks.push(newTask);
   res.status(201).json(newTask);
 });
 
