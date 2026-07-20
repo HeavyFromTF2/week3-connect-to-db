@@ -109,36 +109,50 @@ app.post('/tasks', (req, res) => {
   res.status(201).json(newTask);
 });
 
-// STAGE 4: Update & Delete Endpoints
+// STAGE 3: Update (PUT /tasks/:id)
 app.put('/tasks/:id', (req, res) => {
-  const taskId = parseInt(req.params.id);
-  const task = tasks.find(t => t.id === taskId);
-
-  if (!task) {
-    return res.status(404).json({ error: "No task found" });
-  }
-
+  const taskId = req.params.id;
   const { title, done } = req.body;
 
-  if (!title) {
-    return res.status(400).json({ error: "Title is required" });
+  // 1. Verifica se a tarefa existe no banco
+  const existingTask = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+  if (!existingTask) {
+    return res.status(404).json({ error: 'No task found' });
   }
 
-  task.title = title;
-  task.done = done;
-  res.status(200).json(task);
+  // 2. Validação do body
+  if (!title || title.trim() === '') {
+    return res.status(400).json({ error: 'Title is required' });
+  }
+
+  // 3. Converte done para boolean/número (1 ou 0)
+  const isDone = done ? 1 : 0;
+
+  // 4. Executa o UPDATE no SQLite
+  db.prepare('UPDATE tasks SET title = ?, done = ? WHERE id = ?').run(title.trim(), isDone, taskId);
+
+  // 5. Retorna a tarefa atualizada
+  res.status(200).json({
+    id: Number(taskId),
+    title: title.trim(),
+    done: Boolean(isDone)
+  });
 });
 
+// STAGE 3: Delete (DELETE /tasks/:id)
 app.delete('/tasks/:id', (req, res) => {
-  const taskId = parseInt(req.params.id);
-  const task = tasks.find(t => t.id === taskId);
+  const taskId = req.params.id;
 
-  if (!task) {
-    return res.status(404).json({ error: "No task found" });
+  // 1. Executa o DELETE e guarda o resultado
+  const result = db.prepare('DELETE FROM tasks WHERE id = ?').run(taskId);
+
+  // 2. Se nenhuma linha foi alterada (changes === 0), a tarefa não existia
+  if (result.changes === 0) {
+    return res.status(404).json({ error: 'No task found' });
   }
 
-  tasks = tasks.filter(t => t.id !== taskId);
-  res.status(204).send()
+  // 3. Sucesso sem conteúdo (204)
+  res.status(204).send();
 });
 
 // STAGE 5: Swagger UI Documentation
