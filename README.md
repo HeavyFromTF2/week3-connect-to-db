@@ -10,11 +10,8 @@ The database file `tasks.db` is created automatically at the root of the project
 
 ## How to Run
 
-1. Install dependencies:
-   npm install
-
-2. Start the server:
-   node index.js
+1. Install dependencies: npm install
+2. Start the server: node index.js
 
 The server will run on http://localhost:3000.
 
@@ -29,18 +26,21 @@ You can test all endpoints visually using Swagger UI:
 
 * GET / - API Info
 * GET /health - Health Check
-* GET /tasks - List all tasks (supports filtering via `?done=true` or `?done=false`)
+* GET /tasks - List all tasks (supports filtering via `?done=true` or search via `?search=term`)
 * GET /tasks/:id - Get a task by ID
 * POST /tasks - Create a task
 * PUT /tasks/:id - Update a task
 * DELETE /tasks/:id - Delete a task
 
-**Database Screenshot:**
+## Testing Search with SQL (LIKE operator)
+You can test the search functionality directly in your terminal:
+
+* **Command:** `curl "http://localhost:3000/tasks?search=Learn"`
+* **Output:** `[{"id":1,"title":"Learn Express basics","done":true}]`
+
+## Database Screenshot
 ![DB Browser Screenshot](./db-screenshot.png)
 
 ## Example SQL Query
-* **Query executed:**
-  ```sql
-  SELECT * FROM tasks WHERE done = 1;
-
-  **That outputed the only 2 tasks that were marked as done "Learn Express basics" and "Edit simple task"
+* **Query executed:** `SELECT * FROM tasks WHERE done = 1;`
+* **Output/Result:** Returned only the tasks marked as completed (`done = 1`), specifically "Learn Express basics" and "Edit simple task".
