@@ -100,7 +100,7 @@ Remove database volume:
 docker compose down -v
 ```
 
-## Example Response (curl -i http://localhost:3000/tasks/1)
+## Example Response  curl -i http ://localhost:3000/tasks/1
 
 ```bash
 HTTP/1.1 200 OK
