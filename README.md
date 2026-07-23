@@ -100,6 +100,21 @@ Remove database volume:
 docker compose down -v
 ```
 
+## Example Response (curl -i http://localhost:3000/tasks/1)
+
+```bash
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 51
+ETag: W/"33-3oxX/lmnlLEYtTkLFbs+TXLSipw"
+Date: Thu, 23 Jul 2026 20:14:42 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":1,"title":"Learn Express basics","done":true}
+```
+
 ## Features
 
 - PostgreSQL
@@ -110,9 +125,12 @@ docker compose down -v
 
 ## SQL Example
 
+This query only returns the completed tasks from the DB:
 ```sql
 SELECT * FROM tasks WHERE done = true;
 ```
+
+
 
 ## Database
 
