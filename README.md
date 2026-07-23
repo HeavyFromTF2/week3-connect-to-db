@@ -173,6 +173,9 @@ The PostgreSQL database runs inside its own Docker container.
 - **Docker Image Optimization:** It used `node:20-alpine` as the base image and included the `--omit=dev` flag in the `npm install` step, which creates a much smaller and production-ready container.
 - **Clean Swagger Architecture:** Instead of cluttering the main server file, it separated the OpenAPI configuration into a dedicated `config/swagger.js` file and used JSDoc comments directly above the routes. The entire structure is way more clean and production ready.
 
+**Docker container the AI created:**
+<img width="1901" height="1045" alt="image" src="https://github.com/user-attachments/assets/8abf9a7c-d987-4b74-9177-50335c64893b" />
+
 **2. What AI got wrong or ignored (Breaking the A1/A2 requirements):**
 - **Schema Changes:** The AI changed the boolean column name from `done` to `completed` (even tho it was not specified in my prompt) and added unnecessary columns like `description`, `created_at`, and `updated_at`. 
 - **Endpoint Paths:** It prefixed all routes with `/api/tasks` instead of the original `/tasks` root path.
