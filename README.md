@@ -100,7 +100,7 @@ Remove database volume:
 docker compose down -v
 ```
 
-## Example Response  curl -i http ://localhost:3000/tasks/1
+## Example Response using curl -i http ://localhost:3000/tasks/1
 
 ```bash
 HTTP/1.1 200 OK
@@ -114,6 +114,7 @@ Keep-Alive: timeout=5
 
 {"id":1,"title":"Learn Express basics","done":true}
 ```
+
 
 ## Features
 
@@ -135,7 +136,7 @@ SELECT * FROM tasks WHERE done = true;
 ## Database
 
 The PostgreSQL database runs inside its own Docker container.
-<img width="1915" height="1016" alt="image" src="https://github.com/user-attachments/assets/e73f370d-2833-4975-b021-8595d61db785" />
+<img width="1500" height="850" alt="image" src="https://github.com/user-attachments/assets/e73f370d-2833-4975-b021-8595d61db785" />
 
 
 ## AI Usage
