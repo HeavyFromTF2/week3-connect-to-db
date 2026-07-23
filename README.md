@@ -37,16 +37,17 @@ SELECT * FROM tasks WHERE done = 1;
 
 ## Database
 
-*(Insert SQLite screenshot here)*
+<img width="600" height="450" alt="image" src="https://github.com/user-attachments/assets/0474db6d-be19-4984-851e-9a963ff55904" />
 
 ## AI Usage
 
-AI was used as a learning and code-review tool to better understand:
+AI was used as a learning and code-review tool (not a blind control-c control-v tool) to better understand:
 
 - `better-sqlite3`
 - Parameterized SQL queries
 - SQLite boolean mapping (`0/1` ↔ `true/false`)
 - Documentation improvements
+- Creating this README.
 
 ---
 
