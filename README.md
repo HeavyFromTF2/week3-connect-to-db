@@ -75,6 +75,11 @@ After improving the prompt to include seeding, Swagger and filtering, the genera
 
 The project was migrated from SQLite to PostgreSQL running in Docker.
 
+## Environment Setup
+Copy the example environment file before starting, so you have the respective .env file:
+```bash
+cp .env.example .env
+
 ## Run
 
 ```bash
