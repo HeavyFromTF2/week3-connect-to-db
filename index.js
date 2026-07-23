@@ -1,37 +1,46 @@
 // Import Express and core dependencies
 const express = require('express');
-const Database = require('better-sqlite3');
 const swaggerUi = require('swagger-ui-express');
 const fs = require('fs');
 
 const app = express();
 const PORT = 3000;
 
-// STAGE 0: Initialize SQLite database instance
-const db = new Database('tasks.db');
+require('dotenv').config();
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
 
 // Load Swagger API specification
 const swaggerDocument = JSON.parse(fs.readFileSync('./openapi.json', 'utf8'));
 
 app.use(express.json());
 
-// STAGE 0: Initialize database schema
-db.exec(`
-  CREATE TABLE IF NOT EXISTS tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    done INTEGER NOT NULL DEFAULT 0
-  )
-`);
+// STAGE 1: Initialize database schema & seed tasks
+async function initDb() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS tasks (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      done BOOLEAN NOT NULL DEFAULT false
+    );
+  `);
 
-// STAGE 0: Seed default tasks if database is empty
-const count = db.prepare('SELECT COUNT(*) AS total FROM tasks').get().total;
-if (count === 0) {
-  const insert = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)');
-  insert.run("Learn Express basics", 1);
-  insert.run("Build Stage 2 of CRUD API", 0);
-  insert.run("Practice git commits", 0);
+  const res = await pool.query('SELECT COUNT(*) FROM tasks');
+  if (parseInt(res.rows[0].count) === 0) {
+    await pool.query(`
+      INSERT INTO tasks (title, done) VALUES 
+      ('Learn Express basics', true),
+      ('Build Stage 2 of CRUD API', false),
+      ('Practice git commits', false);
+    `);
+  }
 }
+
+initDb().catch(console.error);
 
 // GET / - API Info
 app.get('/', (req, res) => {
