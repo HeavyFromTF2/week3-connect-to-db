@@ -98,58 +98,85 @@ app.get('/tasks/:id', async (req, res) => {
   }
 });
 
-// STAGE 2: Create task
-app.post('/tasks', (req, res) => {
-  const { title } = req.body;
+// STAGE 3: Create task
+app.post('/tasks', async (req, res) => {
+  try {
+    const { title } = req.body;
 
-  if (!title || title.trim() === '') {
-    return res.status(400).json({ error: 'Title is required' });
+    // 1. Validação: título obrigatório e não vazio
+    if (!title || title.trim() === '') {
+      return res.status(400).json({ error: 'Title is required' });
+    }
+
+    // 2. Inserir no Postgres e retornar a nova linha criada
+    const result = await pool.query(
+      'INSERT INTO tasks (title, done) VALUES ($1, $2) RETURNING *',
+      [title.trim(), false]
+    );
+
+    // 3. Responder com status 201 (Created) e o objeto da tarefa criada
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  const insert = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)');
-  const result = insert.run(title.trim(), 0);
-
-  res.status(201).json({
-    id: Number(result.lastInsertRowid),
-    title: title.trim(),
-    done: false
-  });
 });
 
 // STAGE 3: Update task
-app.put('/tasks/:id', (req, res) => {
-  const taskId = req.params.id;
-  const { title, done } = req.body;
+app.put('/tasks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, done } = req.body;
 
-  const existingTask = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
-  if (!existingTask) {
-    return res.status(404).json({ error: 'No task found' });
+    // 1. Validação: o título é obrigatório
+    if (!title || title.trim() === '') {
+      return res.status(400).json({ error: 'Title is required' });
+    }
+
+    // 2. Garantir que 'done' é um boleano (se não for enviado, assume false)
+    const isDone = Boolean(done);
+
+    // 3. Atualizar no Postgres e retornar a linha modificada
+    const result = await pool.query(
+      'UPDATE tasks SET title = $1, done = $2 WHERE id = $3 RETURNING *',
+      [title.trim(), isDone, id]
+    );
+
+    // 4. Se a query não afetou nenhuma linha, o ID não existe
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    // 5. Retornar a tarefa atualizada
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  if (!title || title.trim() === '') {
-    return res.status(400).json({ error: 'Title is required' });
-  }
-
-  const isDone = done ? 1 : 0;
-  db.prepare('UPDATE tasks SET title = ?, done = ? WHERE id = ?').run(title.trim(), isDone, taskId);
-
-  res.status(200).json({
-    id: Number(taskId),
-    title: title.trim(),
-    done: Boolean(isDone)
-  });
 });
 
 // STAGE 3: Delete task
-app.delete('/tasks/:id', (req, res) => {
-  const taskId = req.params.id;
-  const result = db.prepare('DELETE FROM tasks WHERE id = ?').run(taskId);
+app.delete('/tasks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
 
-  if (result.changes === 0) {
-    return res.status(404).json({ error: 'No task found' });
+    // 1. Eliminar do Postgres usando a cláusula RETURNING
+    const result = await pool.query(
+      'DELETE FROM tasks WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    // 2. Se nenhuma linha foi devolvida, o ID não existia
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    // 3. Sucesso sem conteúdo a retornar (Status 204)
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  res.status(204).send();
 });
 
 // STAGE 5: Swagger UI Documentation
