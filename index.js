@@ -56,41 +56,46 @@ app.get('/health', (req, res) => {
   res.json({ status: "ok" });
 });
 
-// STAGE 1 + EXTRA: Read tasks (supports ?search and ?done filters)
-app.get('/tasks', (req, res) => {
-  const { done, search } = req.query;
-  let rows;
+// STAGE 2: Read tasks
+app.get('/tasks', async (req, res) => {
+  try {
+    const { done, search } = req.query;
+    let query = 'SELECT * FROM tasks';
+    let params = [];
 
-  if (search) {
-    rows = db.prepare('SELECT * FROM tasks WHERE title LIKE ?').all(`%${search}%`);
-  } else if (done !== undefined) {
-    const isDoneVal = done === 'true' ? 1 : 0;
-    rows = db.prepare('SELECT * FROM tasks WHERE done = ?').all(isDoneVal);
-  } else {
-    rows = db.prepare('SELECT * FROM tasks').all();
+    if (search) {
+      query += ' WHERE title ILIKE $1';
+      params.push(`%${search}%`);
+    } else if (done !== undefined) {
+      query += ' WHERE done = $1';
+      params.push(done === 'true');
+    }
+
+    query += ' ORDER BY id ASC';
+
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  const tasks = rows.map(task => ({
-    ...task,
-    done: Boolean(task.done)
-  }));
-
-  res.json(tasks);
 });
 
-// STAGE 1: Read task by ID
-app.get('/tasks/:id', (req, res) => {
-  const taskId = req.params.id;
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(taskId);
+// STAGE 2: Read task by ID
+app.get('/tasks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM tasks WHERE id = $1', [id]);
 
-  if (!task) {
-    return res.status(404).json({ error: `Task ${taskId} not found` });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  res.json({
-    ...task,
-    done: Boolean(task.done)
-  });
 });
 
 // STAGE 2: Create task
