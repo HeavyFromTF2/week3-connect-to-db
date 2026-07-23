@@ -110,13 +110,16 @@ SELECT * FROM tasks WHERE done = true;
 
 ## Database
 
-*(Insert PostgreSQL screenshot here)*
+The PostgreSQL database runs inside its own Docker container.
+<img width="1915" height="1016" alt="image" src="https://github.com/user-attachments/assets/e73f370d-2833-4975-b021-8595d61db785" />
+
 
 ## AI Usage
 
 AI was used to:
 
 - Understand Docker Compose
-- Configure PostgreSQL
+- Aid in the changes of the CRUD operations (not the routes)
+- Debugging code
 - Debug connection startup issues
 - Improve the project documentation
